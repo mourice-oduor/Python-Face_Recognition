@@ -8,7 +8,8 @@ This is a simple face recognition/detection Script using OpenCv and face_recogni
 #              numpy
 #              face_recognition
 
-
+Note; 
+	The requirements should be installed in the order they are listed. face_recognition can not be installed before installing "cmake" $ "dlib" libraries.
 
 # Links to Documentations:
 #                        https://pypi.org/project/face-recognition/
