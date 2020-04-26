@@ -7,16 +7,10 @@ import face_recognition as fr
 from time import sleep
 
 
-def get_encoded_faces():
-    """
-    looks through the faces folder and encodes all
-    the faces
+def encodingFaces():
+    encoded = {}      ##return: dict of (name, encoded_image)
 
-    :return: dict of (name, image encoded)
-    """
-    encoded = {}
-
-    for dirpath, dnames, fnames in os.walk("./Input_faces"):
+    for dirpath, dnames, fnames in os.walk(".Input_/faces"):
         for f in fnames:
             if f.endswith(".jpg") or f.endswith(".png"):
                 face = fr.load_image_file("Input_faces/" + f)
@@ -26,17 +20,13 @@ def get_encoded_faces():
     return encoded
 
 
-def unknown_image_encoded(img):
-    """
-    encode a face given the file name
-    """
+def encodedImage(img):
     face = fr.load_image_file("Input_faces/" + img)
     encoding = fr.face_encodings(face)[0]
-
     return encoding
 
 
-def classify_face(im):
+def faceClassification(im):
     """
     will find all of the faces in a given image and label
     them if it knows what they are
@@ -44,16 +34,16 @@ def classify_face(im):
     :param im: str of file path
     :return: list of face names
     """
-    faces = get_encoded_faces()
+    faces = encodingFaces()
     faces_encoded = list(faces.values())
     known_face_names = list(faces.keys())
 
-    img = cv2.imread(im, 1)
-    #img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
-    #img = img[:,:,::-1]
+    image = cv2.imread(im, 1)
+    #image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
+    #image = image[:,:,::-1]
  
-    face_locations = face_recognition.face_locations(img)
-    unknown_face_encodings = face_recognition.face_encodings(img, face_locations)
+    face_locations = face_recognition.face_locations(image)
+    unknown_face_encodings = face_recognition.face_encodings(image, face_locations)
 
     face_names = []
     for face_encoding in unknown_face_encodings:
@@ -71,22 +61,24 @@ def classify_face(im):
 
         for (top, right, bottom, left), name in zip(face_locations, face_names):
             # Draw a box around the face
-            cv2.rectangle(img, (left-20, top-20), (right+20, bottom+20), (0, 0, 255), 3)
+            cv2.rectangle(image, (left-20, top-20), (right+20, bottom+20), (0, 0, 255), 2)
 
             # Draw a label with a name below the face
-            cv2.rectangle(img, (left-20, bottom -15), (right+20, bottom+20), (0, 0, 255), cv2.FILLED)
+            cv2.rectangle(image, (left-20, bottom -15), (right+20, bottom+20), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(img, name, (left -20, bottom + 15), font, 1.0, (255, 255, 255), 3)
+            cv2.putText(image, name, (left -20, bottom + 15), font, 1.0, (255, 255, 255), 2)
 
 
     # Display the resulting image
     while True:
 
-        cv2.imshow('Image', img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            return face_names 
+        cv2.imshow('Recognition', image)
+        #cv2.imwrite('/home/net/MORYSO/PYTHON/Game-Dev/games-todo/14. Face-Recognition/Face-Recognition/Recognized_images/recognized_image{}.jpg'.format(image), image)
+        if cv2.waitKey(5) & 0xFF == ord('q'):
+            return face_names
 
+        cv2.destroyAllWindows()
 
-print(classify_face("test.jpg"))
-
+if __name__ == "__main__":
+    print(faceClassification("test.jpg"))
 
