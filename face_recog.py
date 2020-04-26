@@ -3,7 +3,6 @@ import numpy as np
 import os
 import face_recognition
 import face_recognition as fr
-
 from time import sleep
 
 
