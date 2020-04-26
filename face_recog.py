@@ -3,17 +3,22 @@ import numpy as np
 import os
 import face_recognition
 import face_recognition as fr
-from time import sleep
 
 
 def encodingFaces():
     encoded = {}      ##return: dict of (name, encoded_image)
 
-    for dirpath, dnames, fnames in os.walk(".Input_/faces"):
+    for dirpath, dnames, fnames in os.walk("./Input_faces"):
         for f in fnames:
             if f.endswith(".jpg") or f.endswith(".png"):
                 face = fr.load_image_file("Input_faces/" + f)
                 encoding = fr.face_encodings(face)[0]
+                #encoding = face_recognition.face_encodings(img, known_face_locations=[face_location])
+                # if len(encoding) > 0:
+                #     biden_encoding = encoding[0]
+                # else:
+                #     print("No faces found in the image!")
+                #     quit()
                 encoded[f.split(".")[0]] = encoding
 
     return encoded
@@ -26,23 +31,20 @@ def encodedImage(img):
 
 
 def faceClassification(im):
-    """
-    will find all of the faces in a given image and label
-    them if it knows what they are
-
-    :param im: str of file path
-    :return: list of face names
-    """
     faces = encodingFaces()
     faces_encoded = list(faces.values())
     known_face_names = list(faces.keys())
 
-    image = cv2.imread(im, 1)
-    #image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
-    #image = image[:,:,::-1]
- 
-    face_locations = face_recognition.face_locations(image)
-    unknown_face_encodings = face_recognition.face_encodings(image, face_locations)
+    img = cv2.imread(im, 1)
+    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    #faces = face_detector.detectMultiScale(gray, 1.3, 5)
+    #img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
+    #img = img[:,:,::-1]
+
+    scaleFactor = 1.1
+
+    face_locations = face_recognition.face_locations(img)
+    unknown_face_encodings = face_recognition.face_encodings(img, face_locations)
 
     face_names = []
     for face_encoding in unknown_face_encodings:
@@ -60,19 +62,19 @@ def faceClassification(im):
 
         for (top, right, bottom, left), name in zip(face_locations, face_names):
             # Draw a box around the face
-            cv2.rectangle(image, (left-20, top-20), (right+20, bottom+20), (0, 0, 255), 2)
+            cv2.rectangle(img, (left-20, top-20), (right+20, bottom+20), (0, 0, 255), 2)
 
             # Draw a label with a name below the face
-            cv2.rectangle(image, (left-20, bottom -15), (right+20, bottom+20), (0, 0, 255), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(image, name, (left -20, bottom + 15), font, 1.0, (255, 255, 255), 2)
+            cv2.rectangle(img, (left-20, bottom -15), (right+20, bottom+20), (0, 0, 255), cv2.FILLED)
+            font = cv2.FONT_HERSHEY_COMPLEX
+            cv2.putText(img, name, (left -20, bottom + 15), font, 1.0, (255, 255, 255), 3)
 
 
-    # Display the resulting image
+    # Display the resulting img
     while True:
 
-        cv2.imshow('Recognition', image)
-        #cv2.imwrite('/home/net/MORYSO/PYTHON/Game-Dev/games-todo/14. Face-Recognition/Face-Recognition/Recognized_images/recognized_image{}.jpg'.format(image), image)
+        cv2.imshow('Recognition', img)
+        cv2.imwrite('/home/net/MORYSO/PYTHON/Game-Dev/games-todo/14. Face-Recognition/Recognized_faces/recognized_face{}.jpg'.format(img), img)
         if cv2.waitKey(5) & 0xFF == ord('q'):
             return face_names
 
