@@ -1,0 +1,8 @@
+This note provide installation instructions for Linux-Based OS users only:
+
+On the terminal, type:
+python3 -m pip install 'sftwr/package/library name'
+python3 -m pip install --upgrade pip
+sudo pip3 install "sftwr/package/library name"
+sudo apt-get update
+sudo apt-get upgrade
